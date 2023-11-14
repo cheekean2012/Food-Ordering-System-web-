@@ -1,0 +1,15 @@
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 120px;
+}
+
+i.fa-solid {
+    color: #f59b00;
+}
+
+
+.divider {
+    margin-top: 0.8rem;
+    margin-bottom: 0.8rem;
+    border-top: 2px solid rgba(0, 0, 0, 0.5);
+}
