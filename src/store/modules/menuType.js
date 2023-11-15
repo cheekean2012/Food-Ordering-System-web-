@@ -1,45 +1,33 @@
+import { db } from "../../firebase";
+import { collection, getDocs } from "firebase/firestore"; 
+
 export default {
     namespaced: true,
     state() {
         return {
-            menuTypes: [
-                {
-                    id: 'T1',
-                    type: 'Rice'
-                },
-                {
-                    id: 'T2',
-                    type: 'Noodles'
-                },
-                {
-                    id: 'T3',
-                    type: 'Western Food'
-                },
-                {
-                    id: 'T4',
-                    type: 'Soup'
-                },
-                {
-                    id: 'T5',
-                    type: 'Snacks'
-                },
-                {
-                    id: 'T6',
-                    type: 'Drinks'
-                },
-                {
-                    id: 'T7',
-                    type: 'Desserts'
-                }
-            ],
-            activeItemType: 'Rice',            
+            menuTypes: [],
+            activeItemType: 'RICE',            
         }
     },
     mutations: {
+        setMenuTypes(state, menuTypes) {
+            state.menuTypes = menuTypes;
+          },
         setActiveItem(state, item) {
             state.activeItemType = item;
         },
     },
+    actions: {
+        async fetchMenuTypes({ commit }) {
+          try {
+            const querySnapshot = await getDocs(collection(db, 'menuTypes'));
+            const menuTypes = querySnapshot.docs.map((doc) => doc.data().menuType);            
+            commit('setMenuTypes', menuTypes);
+          } catch (error) {
+            console.error('Error fetching menu types:', error);
+          }
+        },
+      },
     getters: {
         menuTypes(state) {
             return state.menuTypes;

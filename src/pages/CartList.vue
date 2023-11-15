@@ -28,29 +28,27 @@
                 </ul>
             </div>
         </section>
-        <div class="container-fluid price-container mt-3">
-            <!-- <div class="d-flex flex-column"> -->
-                <div class="d-flex justify-content-between">
-                    <span>Subtotal</span>
-                    <span>RM{{ subTotal }}</span>
-                </div>
-                <div class="d-flex justify-content-between">
-                    <span>Service Charge 10%</span>
-                    <span>RM{{ serviceCharge }}</span>
-                </div>
-                <div class="d-flex justify-content-between">
-                    <span>Before Round up</span>
-                    <span>RM{{ beforeRoundup }}</span>
-                </div>
-                <div class="d-flex justify-content-between">
-                    <span>Round up</span>
-                    <span>RM{{ roundup }}</span>
-                </div>
-                <div class="d-flex justify-content-between">
-                    <span class="fs-5 fw-bold">Total</span>
-                    <span class="fs-5 fw-bold">RM{{ total }}</span>
-                </div>
-            <!-- </div>            -->
+        <div class="container-fluid price-container">
+            <div class="d-flex justify-content-between">
+                <span>Subtotal</span>
+                <span>RM{{ subTotal }}</span>
+            </div>
+            <div class="d-flex justify-content-between">
+                <span>Service Charge 10%</span>
+                <span>RM{{ serviceCharge }}</span>
+            </div>
+            <div class="d-flex justify-content-between">
+                <span>Before Round up</span>
+                <span>RM{{ beforeRoundup }}</span>
+            </div>
+            <div class="d-flex justify-content-between">
+                <span>Round up</span>
+                <span>RM{{ roundup }}</span>
+            </div>
+            <div class="d-flex justify-content-between">
+                <span class="fs-5 fw-bold">Total</span>
+                <span class="fs-5 fw-bold">RM{{ total }}</span>
+            </div>
         </div>
         <base-button-footer :disabled="cartItems.length === 0">PLACE ORDER</base-button-footer>
     </base-container>
@@ -140,7 +138,8 @@ import CartItem from '../components/Cart/CartItem.vue';
         justify-content: center;
         align-items: center;
         height: 560px;
-        margin-top: 2rem;
+        /* margin-top: 2rem; */
+        margin-bottom: auto;
         background-color: #dfdfdf;
         box-shadow: 0px 7px 10px -15px rgba(0,0,0,0.75);
     }
@@ -150,10 +149,11 @@ import CartItem from '../components/Cart/CartItem.vue';
     }
 
     .price-container {
-        position: absolute;
-        bottom: 8%;
-        max-width: 480px;
-
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        justify-content: end;
+        margin-bottom: 1.5rem;
     }
 
     .previous-btn {
@@ -168,4 +168,11 @@ import CartItem from '../components/Cart/CartItem.vue';
         list-style: none;
         padding: 0;
     }
+
+    .footer {
+        height: 50px;        
+        margin: 0 auto;
+        box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;                
+    }
+
 </style>

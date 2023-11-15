@@ -2,12 +2,12 @@
     <base-container>
         <div class="card mb-3">
             <base-previous-button @click="backToPrevious"></base-previous-button>
-            <img :src="item.image" class="card-img-top" :alt="item.name">
+            <img :src="item.image" class="card-img-top" :alt="item.itemName">
             <div class="card-body">
-                <h5 class="card-title">{{ item.name }}</h5>
-                <p class="card-text">Ingredients: {{ item.ingredients }}</p>
+                <h5 class="card-title">{{ item.itemName }}</h5>
+                <p class="card-text">Ingredients: {{ item.ingredient }}</p>
                 <div class="d-flex justify-content-between align-items-center">
-                    <p class="card-text mb-0">Price: RM{{ item.unitPrice }}</p>
+                    <p class="card-text mb-0">Price: RM{{ formatPrice }}</p>
                     <div class="d-flex quantity-container">
                         <button class="btn quantity-btn" @click="removeQuantity">
                             <i class="fa-solid fa-minus fa-2xs p-2" style="color: #f59b00;"></i>
@@ -22,13 +22,13 @@
         </div>
         <div class="card mb-3">
             <div class="card-body">
-                <h5 class="card-title">Takeaway</h5>
+                <h5 class="card-title">Additional</h5>
                 <div class="d-flex justify-content-between align=items-center mt-3">
                     <div class="checkbox-container">
                         <input type="checkbox" class="custom-checkbox" name="checkbox-takeaway" id="checkbox-takeaway" v-model="isChecked">
                         <label for="checkbox-takeaway">Container Charge Fees</label>
                     </div>
-                    <p class="card-text">RM{{ charegedFee }}</p>
+                    <p class="card-text">RM{{ chargedFee }}</p>
                 </div>
             </div>
         </div>
@@ -38,7 +38,7 @@
                 <textarea class="form-control" placeholder="Enter remark here" id="floatingTextarea2" style="height: 100px" v-model="enterRemarks"></textarea>
             </div>
         </div>
-        <div class="d-flex pb-5">
+        <div class="d-flex pb-5 flex-grow-1">
             <h4 class="card-text m-2">Total Price: RM{{ totalPrice }}</h4>
         </div>
         <base-button-footer @click="addToCart">{{ cartButtonName }}</base-button-footer>
@@ -57,18 +57,18 @@ import BasePreviousButton from '@/components/UI/BasePreviousButton.vue';
             return {
                 item: {
                     id: '',
-                    name: '',
+                    itemName: '',
                     type: '',
-                    unitPrice: null,
+                    price: '',
                     image: '',
-                    ingredients: '',
+                    ingredient: '',
                     remarks: '',
                 },
                 enterRemarks: '',
                 getMenuId: null,
                 getCardItemIndex: null,
                 quantity: 1,
-                charegedFee: 2,
+                chargedFee: "2.00",
                 isChecked: false,
                 cartButtonName: 'ADD TO CART',
             }
@@ -87,8 +87,8 @@ import BasePreviousButton from '@/components/UI/BasePreviousButton.vue';
                     
                     this.$store.dispatch('cart/addToCart', {
                         id: this.item.id,
-                        name: this.item.name,
-                        unitPrice: this.item.unitPrice,
+                        name: this.item.itemName,
+                        unitPrice: this.item.price,
                         totalPrice: this.totalPrice,
                         quantity: this.quantity,
                         remarks: this.enterRemarks,
@@ -99,8 +99,8 @@ import BasePreviousButton from '@/components/UI/BasePreviousButton.vue';
                         index: this.getCardItemIndex,
                         item: {
                             id: this.item.id, // Make sure to include the ID
-                            name: this.item.name,
-                            unitPrice: this.item.unitPrice,
+                            name: this.item.itemName,
+                            unitPrice: this.item.price,
                             totalPrice: this.totalPrice,
                             quantity: this.quantity,
                             remarks: this.enterRemarks,
@@ -131,16 +131,24 @@ import BasePreviousButton from '@/components/UI/BasePreviousButton.vue';
             },
             totalPrice() {
                 if (this.isChecked) {
-                    return (this.item.unitPrice + this.charegedFee) * this.quantity;
+                    return ((parseFloat(this.item.price) + parseFloat(this.chargedFee)) * this.quantity).toFixed(2);
                 } else {
-                    return this.item.unitPrice * this.quantity;
+                    return (parseFloat(this.item.price) * this.quantity).toFixed(2);
                 }                
+            },
+            formatPrice() {
+                // Convert the prop to a number if it's a string
+                const numericPrice = typeof this.item.price === 'string' ? parseFloat(this.item.price) : this.item.price;
+
+                // Use toFixed on the number
+                return numericPrice.toFixed(2);
             },
         },
         mounted() {
             this.getMenuId = this.toggleMenuItemId;
             this.item = this.menuItems.find(item => item.id === this.getMenuId); 
             console.log('get id from mounted: ' + this.getMenuId);
+            console.log('get item from mounted: ' + this.item.itemName);
 
             // if (this.getCardItemIndex !== null) {
             //     this.cartButtonName = 'UPDATE CART';
@@ -241,10 +249,7 @@ import BasePreviousButton from '@/components/UI/BasePreviousButton.vue';
     }
     
     .footer {
-        bottom: 0;
-        width: 480px;
-        height: 50px;
-        position: fixed;
+        height: 50px;        
         margin: 0 auto;
         box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;                
     }

@@ -1,5 +1,5 @@
 <template>
-    <div class="d-flex footer">
+    <div class="d-flex footer sticky-bottom">
             <button class="btn footer-btn" :disabled="disabled">
                 <slot></slot>
             </button>
@@ -18,11 +18,9 @@
 </script>
 
 <style scoped>
-.footer {
-        bottom: 0;
+.footer {        
         width: 480px;
         height: 50px;
-        position: fixed;
         margin: 0 auto;
         box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;                
     }
@@ -38,5 +36,18 @@
         box-shadow: rgba(0, 0, 0, 0.1) 0 4px 12px;
         color: #fff;
         transition: all 0.2s ease-in-out;
+    }
+
+    
+    @media (orientation: portrait) and (max-width: 480px) {
+        .footer {
+            width: 100%;
+        }   
+    }
+
+    @media (orientation: landscape) and (max-width: 480px) {
+        .footer {
+            width: 100%;
+        }   
     }
 </style>

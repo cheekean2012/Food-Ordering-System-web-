@@ -4,11 +4,11 @@
         <ul>
             <menu-item 
                 v-for="(item, index) in  filteredMenuItems" 
-                :key="item.id"
-                :id="item.id"
-                :name="item.name"
+                :key="item.id" 
+                :id="item.id"               
+                :itemName="item.itemName"
                 :type="item.type"
-                :unitPrice="item.unitPrice"
+                :price="item.price"
                 :image="item.image"
                 :isLastItem="index === filteredMenuItems.length - 1">
             </menu-item>
@@ -43,6 +43,14 @@ export default {
             return this.filteredMenuItems.length === 0;            
         }
     },
+    methods: {
+        async getMenuItems() {
+            await this.$store.dispatch('menu/fetchMenuItems');
+        },  
+    },
+    async mounted() {
+        await this.getMenuItems();
+    }
 
 };
 </script>

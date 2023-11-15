@@ -63,16 +63,17 @@ export default {
                 }
             }
 
+            console.log("cartItems", state.cartItems);
             // Update the cart total and quantity
-            state.cartQty += payload.quantity;
-            state.cartTotal += payload.totalPrice;
+            state.cartQty += payload.quantity;            
+            state.cartTotal += parseFloat(payload.totalPrice);
         },
         updateToCartItem(state, payload) {
             const index = payload.index; // Get the index
             state.cartItems[index] = payload.item; // Update the item
             
             // Recalculate the cartTotal
-            state.cartTotal = state.cartItems.reduce((total, item) => total + item.totalPrice, 0);
+            state.cartTotal = state.cartItems.reduce((total, item) => total + parseFloat(item.totalPrice), 0);
             state.cartQty = state.cartItems.reduce((total, item) => total + item.quantity, 0);
            
             console.log(state.cartItems[index].totalPrice);
@@ -87,9 +88,9 @@ export default {
                 state.cartQty -= existingCartItem.quantity;
                 
                 if(existingCartItem.takeaway) {
-                    state.cartTotal = state.cartTotal - (existingCartItem.unitPrice * existingCartItem.quantity + 2);
+                    state.cartTotal = state.cartTotal - (parseFloat(existingCartItem.unitPrice) * existingCartItem.quantity + 2);
                 } else {
-                    state.cartTotal = state.cartTotal - (existingCartItem.unitPrice * existingCartItem.quantity);
+                    state.cartTotal = state.cartTotal - (parseFloat(existingCartItem.unitPrice) * existingCartItem.quantity);
                 }
 
                 if (state.cartTotal < 0) {

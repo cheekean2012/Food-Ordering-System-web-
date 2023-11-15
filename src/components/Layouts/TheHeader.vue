@@ -29,12 +29,14 @@
 
 <script>
 import { mapState, mapMutations } from 'vuex';
+// import { db } from "../../firebase";
+// import { collection, getDocs } from "firebase/firestore"; 
 
 export default {    
     data() {
         return {
             searchInput: "",
-            menuItemTypes: ["Rice", "Noodles", "Western Food", "Soup", "Drinks", "Desserts"],
+            menuItemTypes: [],
             activeItem: '',
         };
     },
@@ -53,10 +55,17 @@ export default {
                 this.activeItem = itemType; // Update activeItem in this component
                 this.setActiveItem(itemType); // Update activeItem in Vuex store               
         },
+        async getMenuTypes() {
+            await this.$store.dispatch('menuType/fetchMenuTypes');
+        },
     },
-    mounted() {
+    async mounted() {
         this.activeItem = this.setActiveItemType; // Set activeItem in this component to the value in Vuex store
         console.log(this.activeItem);
+         
+        await this.getMenuTypes();
+
+        this.menuItemTypes = this.$store.state.menuType.menuTypes;
     },
 };
 </script>

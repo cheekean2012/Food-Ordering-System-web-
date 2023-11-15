@@ -70,4 +70,17 @@ export default {
         border-radius: 15%;
         padding: 0.2rem 0.5rem;
     }
+
+    @media (orientation: portrait) and (max-width: 480px) {
+        .footer {
+            width: 100%;
+        }   
+    }
+
+    @media (orientation: landscape) and (max-width: 480px) {
+        .footer {
+            width: 100%;
+        }   
+    }
+
 </style>

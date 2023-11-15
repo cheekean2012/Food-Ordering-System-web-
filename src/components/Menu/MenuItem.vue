@@ -3,14 +3,14 @@
         <router-link :to="menuItemDetails" @click="setItemId" class="text-decoration-none">
             <div class="menu-item-data card mb-3 mt-3" >  
                 <div class="row g-0">
-                    <div class="col-2 menu-item-image">
+                    <div class="col-auto me-auto menu-item-image">
                         <img :src="image" :alt="name">
                     </div>
-                    <div class="col-8 ps-4 pe-3">
-                        <h5 class="card-title menu-item-name">{{ id + '. ' + name }}</h5>
+                    <div class="col-5 me-auto ps-4 pe-3">
+                        <h5 class="card-title menu-item-name">{{ itemName }}</h5>
                     </div>
-                    <div class="col-2">
-                        <p class="card-text menu-item-price">RM{{ unitPrice }}</p>
+                    <div class="col-auto ms-auto">
+                        <p class="card-text menu-item-price">RM{{ formatPrice }}</p>
                     </div>
                 </div>
             </div>        
@@ -28,7 +28,7 @@ import { mapMutations } from 'vuex';
                 type: String,
                 required: true,
             },
-            name: {
+            itemName: {
                 type: String,
                 required: true,
             },
@@ -36,7 +36,7 @@ import { mapMutations } from 'vuex';
                 type: String,
                 required: true,
             },
-            unitPrice: {
+            price: {
                 type: Number,
                 required: true,
             },
@@ -52,6 +52,13 @@ import { mapMutations } from 'vuex';
         computed: {
             menuItemDetails () {
                 return {name: 'menuItemDetails'}
+            },
+            formatPrice() {
+                // Convert the prop to a number if it's a string
+                const numericPrice = typeof this.price === 'string' ? parseFloat(this.price) : this.price;
+
+                // Use toFixed on the number
+                return numericPrice.toFixed(2);
             },
         },       
         methods: {
