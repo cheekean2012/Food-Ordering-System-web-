@@ -1,15 +1,16 @@
 <template>
-    <div class="card mt-3 mb-3" :class="{isEmpty: isMenuEmpty}">
+    <div class="card" :class="{isEmpty: isMenuEmpty}">
         <!-- <h5 class="ps-3 pt-3">{{ type }}</h5> -->
         <ul>
             <menu-item 
-                v-for="(item, index) in  filteredMenuItems" 
+                v-for="(item, index) in filteredMenuItems" 
                 :key="item.id" 
                 :id="item.id"               
                 :itemName="item.itemName"
                 :type="item.type"
                 :price="item.price"
                 :image="item.image"
+                :available="item.available"
                 :isLastItem="index === filteredMenuItems.length - 1">
             </menu-item>
         </ul>
@@ -27,6 +28,7 @@ export default {
     data() {
         return {
             isEmptyMenuItem: false,
+            searchInput: '',
         };
     },    
     computed: {
@@ -34,14 +36,19 @@ export default {
             return this.$store.getters['menu/menuItems'];
         },        
         ...mapState({
-          activeItem: (state) => state.menuType.activeItemType, // Map the state to a local computed property          
+          activeItem: (state) => state.menuType.activeItemType, // Map the state to a local computed property
+          menuSearch: (state) => state.menu.searchInput, // Update this line to match your actual Vuex module structure
         }),
         filteredMenuItems() {            
-            return this.menuItems.filter((item) => item.type === this.activeItem);
+            return this.menuItems.filter(
+                (item) =>
+                item.type === this.activeItem &&
+                item.itemName.toLowerCase().includes(this.menuSearch.toLowerCase())
+            );
         },
         isMenuEmpty() {
             return this.filteredMenuItems.length === 0;            
-        }
+        },
     },
     methods: {
         async getMenuItems() {
@@ -50,7 +57,10 @@ export default {
     },
     async mounted() {
         await this.getMenuItems();
-    }
+    },
+    created() {
+        this.searchInput = this.menuSearchValue
+    },
 
 };
 </script>

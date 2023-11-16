@@ -26,4 +26,21 @@ const router = createRouter({
     ],
 });
 
+// Add a beforeEach navigation guard
+router.beforeEach((to, from, next) => {
+  // Check if the user is navigating to a route other than the "menu" page
+  if (to.name !== 'menu') {
+    // Redirect them back to the "menu" page only if they are not already on it
+    if (from.name !== 'menu') {
+      next('/menu');
+    } else {
+      // Allow navigation to other pages
+      next();
+    }
+  } else {
+    // Continue with the navigation
+    next();
+  }
+});
+
 export default router;

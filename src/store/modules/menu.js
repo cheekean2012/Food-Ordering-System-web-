@@ -7,7 +7,8 @@ export default {
       return {
         menuItems: [],
         currentItemDetails: {},
-        itemId: null
+        itemId: null,
+        searchInput: '',
       };
     },
     mutations: {
@@ -17,7 +18,10 @@ export default {
       setToggleItemId(state, itemId) {
         state.itemId = itemId;
         console.log('itemId:', itemId);
-      }
+      },   
+      setSearchInput(state, value) {
+        state.searchInput = value;
+      },       
     },
     actions: {
       async fetchMenuItems({ commit }) {
@@ -34,7 +38,10 @@ export default {
     getters: {
       menuItems(state) {
         return state.menuItems;
-      }
+      },
+      searchInput(state) {
+        return state.searchInput;
+      },
     }
   };
   

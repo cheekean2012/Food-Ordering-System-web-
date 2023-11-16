@@ -1,20 +1,33 @@
 <template>    
     <li>                          
-        <router-link :to="menuItemDetails" @click="setItemId" class="text-decoration-none">
-            <div class="menu-item-data card mb-3 mt-3" >  
-                <div class="row g-0">
-                    <div class="col-auto me-auto menu-item-image">
+        <router-link  v-if="available" :to="menuItemDetails" @click="setItemId" class="text-decoration-none">
+            <div class="menu-item-data card pb-3 pt-3" > 
+                <div class="d-flex">
+                    <div class=" menu-item-image me-3">
                         <img :src="image" :alt="name">
                     </div>
-                    <div class="col-5 me-auto ps-4 pe-3">
-                        <h5 class="card-title menu-item-name">{{ itemName }}</h5>
+                    <div class="flex-grow-1">
+                    <h5 class="card-title menu-item-name">{{ itemName }}</h5>
                     </div>
-                    <div class="col-auto ms-auto">
-                        <p class="card-text menu-item-price">RM{{ formatPrice }}</p>
+                    <div class="flex-shrink-0">
+                    <p class="card-text menu-item-price">RM{{ formatPrice }}</p>
                     </div>
                 </div>
             </div>        
         </router-link>
+        <div v-else :class="{'disabled-card': !available}" class="menu-item-data card pb-3 pt-3" > 
+            <div class="d-flex">
+                <div class=" menu-item-image me-3">
+                    <img :src="image" :alt="name">
+                </div>
+                <div class="flex-grow-1">
+                <h5 class="card-title menu-item-name">{{ itemName }}</h5>
+                </div>
+                <div class="flex-shrink-0">
+                <p class="card-text menu-item-price">RM{{ formatPrice }}</p>
+                </div>
+            </div>
+        </div>    
     </li>
     <hr class="divider" v-if="!isLastItem"/>
 </template>
@@ -43,6 +56,10 @@ import { mapMutations } from 'vuex';
             image: {
                 type: String,
                 required: true,
+            },
+            available: {
+                type: Boolean,
+                default: true,
             },
             isLastItem: {
                 type: Boolean,
@@ -79,9 +96,9 @@ import { mapMutations } from 'vuex';
         display: flex;
     }
 
-    .menu-item-data:last-child {
+    /* .menu-item-data:last-child {
         margin-bottom: 0.5rem;
-    }
+    } */
 
     .menu-item-image img {
         height: 5rem;
@@ -90,9 +107,16 @@ import { mapMutations } from 'vuex';
     }
 
     .divider {
-        margin-top: 1rem;
-        margin-bottom: 0px;
+        /* margin-top: 1rem;
+        margin-bottom: 0px; */
+        margin: 0;
         border-top: 2px solid rgba(0, 0, 0, 0.5);
+    }
+
+    .disabled-card {    
+        background: hsl(0deg 0% 88.34% / 60%);
+        color: rgba(133, 133, 133, 0.5);
+        z-index: 1;
     }
 
 </style>

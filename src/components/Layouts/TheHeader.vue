@@ -1,15 +1,14 @@
 <template>
     <nav>
         <div class="d-flex align-items-center">
-            <div class="input-group m-2 ms-auto">
+            <div class="input-group m-2 ms-3 me-3 flex-grow-1">
             <input
                 type="search"
                 class="form-control rounded"
                 placeholder="Search Food Item"
-            />
-            <span class="input-group-text border-0" id="search-addon" @click="search">
-                <i class="fas fa-search"></i>
-            </span>
+                v-model="searchInput"
+                @input="search"
+            />          
             </div>
             <i class="fa-solid fa-receipt fa-lg me-3 review-order" style="color: black;"></i> 
         </div>
@@ -38,6 +37,7 @@ export default {
             searchInput: "",
             menuItemTypes: [],
             activeItem: '',
+            filteredMenuItems: [],
         };
     },
     computed: {
@@ -45,15 +45,26 @@ export default {
         setActiveItemType() {
             return this.$store.state.menuType.activeItemType;
         },
+        menuItems() {
+            return this.$store.getters['menu/menuItems'];
+        }, 
     },
     methods: {
-        search() {
-            console.log("searching");
-        },
+        // search() {
+        //     this.filteredMenuItems = this.menuItems.filter((menuItem) => {
+        //         return menuItem.itemName.toLowerCase().includes(this.searchInput.toLowerCase());
+        //     });
+        //     console.log(this.filteredMenuItems);
+        // },
         ...mapMutations('menuType', ['setActiveItem']),
             menuTypeClick(itemType) {
                 this.activeItem = itemType; // Update activeItem in this component
                 this.setActiveItem(itemType); // Update activeItem in Vuex store               
+        },
+        ...mapMutations('menu', ['setSearchInput']),
+        search() {
+            console.log("search input on header.vue ",this.searchInput);
+            this.setSearchInput(this.searchInput); // Update searchInput in Vuex store
         },
         async getMenuTypes() {
             await this.$store.dispatch('menuType/fetchMenuTypes');
@@ -66,6 +77,8 @@ export default {
         await this.getMenuTypes();
 
         this.menuItemTypes = this.$store.state.menuType.menuTypes;
+         // Load all menu items initially
+        this.filteredMenuItems = this.$store.getters['menu/menuItems'];
     },
 };
 </script>
