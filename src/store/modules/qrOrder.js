@@ -2,12 +2,17 @@ export default {
     namespaced: true,
     state() {
         return {
+            qrId : null,
             tableNumber: null,
             token: null,
             expTime: null,
         }
     },
     mutations: {
+        setQrId(state, id) {
+            state.qrId = id;
+            localStorage.setItem('qrId', id);
+        },
         setTableNumber(state, tableNumber) {
             state.tableNumber = tableNumber;
             localStorage.setItem('tableNumber', tableNumber);
@@ -40,7 +45,10 @@ export default {
             if (expTime) {
               commit('setExpTime', expTime);
             }
-          },
+        },
+        setQrId(context, id) {
+            context.commit('setQrId', id);
+        },
         setTableNumber( context, tableNumber) {
             context.commit('setTableNumber', tableNumber);
         },

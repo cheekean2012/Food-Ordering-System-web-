@@ -141,12 +141,19 @@ export default {
             state.cartItemIndex = index;
         },
         clearItemsFromCart(state) {
-            state.orderItems = state.cartItems;
             console.log('check order items ', state.orderItems);
             state.cartItems = [];
             state.cartTotal = 0;
             state.cartQty = 0;
             console.log('check cart items ',state.cartItems);
+        },
+        setOrderItems(state, payload) {
+            state.orderItems = payload;
+            console.log('check order items ', state.orderItems);
+        },
+        addOrderItems(state, payload) {
+            state.orderItems.push(...payload);
+            console.log('check order items ', state.orderItems);
         }
     },
     actions: {
@@ -161,6 +168,12 @@ export default {
         },
         clearCartItems(context) {
             context.commit('clearItemsFromCart');
+        },
+        addToOrderItems(context, payload) {
+            context.commit('addOrderItems', payload);
+        },
+        setOrderItems(context, payload) {
+            context.commit('setOrderItems', payload);
         }
     },
     getters: {

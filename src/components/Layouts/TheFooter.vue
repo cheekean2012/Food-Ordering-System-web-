@@ -40,7 +40,6 @@ export default {
         const savedToken = localStorage.getItem('token');
         const savedTableNumber = localStorage.getItem('tableNumber');
         const savedExpTime = localStorage.getItem('expTime');
-        console.log('save table number mounted in footer', savedTableNumber)
 
         if (savedToken === 'undefined') {
             localStorage.removeItem('token');

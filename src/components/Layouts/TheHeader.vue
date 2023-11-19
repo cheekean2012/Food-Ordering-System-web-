@@ -10,11 +10,13 @@
                 @input="search"
             />          
             </div>
-            <i class="fa-solid fa-receipt fa-lg me-3 review-order position-relative" style="color: black;">
-                <span v-if="orderItems.length !== 0" class="notify-badge start-100 translate-middle bg-danger border border-light">
-                    <span class="visually-hidden">New alerts</span>
-                </span>
-            </i> 
+            <router-link to="/menu/orderList">
+                <i class="fa-solid fa-receipt fa-lg me-3 review-order position-relative" style="color: black;">
+                    <span v-if="orderItems != null" class="notify-badge start-100 translate-middle bg-danger border border-light">
+                        <span class="visually-hidden">New alerts</span>
+                    </span>
+                </i> 
+            </router-link>
         </div>
         <div class="menu-item-types-container">
             <div class="menu-item-type" :class="{ active: itemType === activeItem }" 
@@ -25,13 +27,12 @@
             </div>
         </div>
     </nav>
-    <div class="container">
-        <div class="test"></div>
-    </div>
 </template>
 
 <script>
 import { mapState, mapMutations } from 'vuex';
+import { db } from "../../firebase.js";
+import { doc, getDoc } from "firebase/firestore"; 
 
 export default {    
     data() {
@@ -40,6 +41,7 @@ export default {
             menuItemTypes: [],
             activeItem: '',
             filteredMenuItems: [],
+            orderItems: null,
         };
     },
     computed: {
@@ -50,9 +52,6 @@ export default {
         menuItems() {
             return this.$store.getters['menu/menuItems'];
         }, 
-        orderItems() {
-            return this.$store.getters['cart/orderItems'];
-        },
     },
     methods: {
         ...mapMutations('menuType', ['setActiveItem']),
@@ -78,8 +77,20 @@ export default {
          // Load all menu items initially
         this.filteredMenuItems = this.$store.getters['menu/menuItems'];
 
-        const getOrderItems = this.orderItems
-        console.log("getOrderItems", getOrderItems);
+        const qrId = localStorage.getItem('qrId');
+        if (qrId) {
+            const orderItemRef = doc(db, 'tableOrders', qrId);
+            const documentSnapshot = await getDoc(orderItemRef);
+
+            if (documentSnapshot.exists()) {
+                const orderItems = documentSnapshot.data().customerOrdering;
+                if (orderItems !== null) {
+                    this.$store.dispatch('cart/setOrderItems', orderItems);
+                }
+                this.orderItems = orderItems;
+                return; // Exit the function early if orderItems are found
+            }
+            }
     },
 };
 </script>
@@ -90,7 +101,7 @@ export default {
         box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
         position: sticky;
         top: 0;        
-        z-index: 1;        
+        z-index: 99;        
     }
 
     .nav-dir {

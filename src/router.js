@@ -23,6 +23,11 @@ const router = createRouter({
             path: "/cart",
             component: () => import("./pages/CartList.vue"),
         },
+        {
+          name: "order",
+          path: "/menu/orderList",
+          component: () => import("./pages/OrderList.vue"),
+        }
         // {
         //     path: '/:notFound(.*)',
         //     //component: () => import("./pages/NotFound.vue"),
@@ -34,21 +39,19 @@ const router = createRouter({
 // Add a beforeEach navigation guard
 router.beforeEach((to, from, next) => {
   // Check if the user is navigating to a route other than the "menu" page
-  if (to.name !== 'menu') {
-    if (from.name !== 'menu') {
-      // Allow navigation to other pages
-      next();
-    } else if (to.name === 'menuItemDetails' && from.name === 'cart') {
-      console.log("from.name", from.name);
-      console.log("to.name", to.name);
-      next();
+    if (to.name !== 'menu') {
+       if (to.name === 'menuItemDetails' && from.name === 'cart') {
+          next();
+        } else if (from.name !== 'menu') {
+          // Allow navigation to other pages
+          next('/menu');
+        } else {
+          next();
+        }
     } else {
+      // Continue with the navigation
       next();
     }
-  } else {
-    // Continue with the navigation
-    next();
-  }
 });
 
 

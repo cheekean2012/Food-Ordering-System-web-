@@ -54,10 +54,15 @@ export default {
         }
     },
     async mounted() {
+        const savedId = localStorage.getItem('qrId');
         const savedToken = localStorage.getItem('token');
         const savedTableNumber = localStorage.getItem('tableNumber');
         const savedExpTime = localStorage.getItem('expTime');
         
+        if (savedId == 'undefined' && savedId == null) {
+            localStorage.removeItem('qrId');
+        }
+
         // Check if the key exists and its value is not 'undefined'
         if (savedToken == 'undefined' && savedToken == null) {
             localStorage.removeItem('token');
@@ -74,22 +79,23 @@ export default {
         // Check if redirectedFrom is defined before accessing its properties
         if (this.$route.redirectedFrom && this.$route.redirectedFrom.query.token != null) {
             var tokenFromUrl = this.$route.redirectedFrom.query.token;
-            console.log('tokenFromUrl', tokenFromUrl);
 
             if (tokenFromUrl != null) {
                 console.log('tokenFromUrl is not null');
                 // Assuming your collection is named 'tableOrder'
-                const tableOrderRef = doc(db, 'tableOrder', tokenFromUrl);
+                const tableOrderRef = doc(db, 'tableOrders', tokenFromUrl);
 
                 // Retrieve the document data
                 const documentSnapshot = await getDoc(tableOrderRef);
 
                 if (documentSnapshot.exists()) {
                     // Document exists, you can access its data
+                    const id = documentSnapshot.data().id;
                     const tableNumber = documentSnapshot.data().tableNumber;
                     const token = documentSnapshot.data().token;
                     const expTime = documentSnapshot.data().expTime;
 
+                    this.$store.dispatch('qrOrder/setQrId', id);
                     this.$store.dispatch('qrOrder/setTableNumber', tableNumber);
                     this.$store.dispatch('qrOrder/setToken', token);
                     this.$store.dispatch('qrOrder/setExpTime', expTime);
@@ -104,9 +110,10 @@ export default {
             } else {
                 console.log('tokenFromUrl is null');
             }
-        } else if ( savedToken != null && savedTableNumber != null && savedExpTime != null) {
+        } else if (savedId != null && savedToken != null && savedTableNumber != null && savedExpTime != null) {
             const customUrl = `/menu?tableNumber=${savedTableNumber}&token=${savedToken}`;
 
+            this.$store.dispatch('qrOrder/setQrId', savedId);
             this.$store.dispatch('qrOrder/setTableNumber', savedTableNumber);
             this.$store.dispatch('qrOrder/setToken', savedToken);
             this.$store.dispatch('qrOrder/setExpTime', savedExpTime);

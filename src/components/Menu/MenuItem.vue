@@ -114,7 +114,7 @@ import { mapMutations } from 'vuex';
     }
 
     .disabled-card {    
-        background: hsl(0deg 0% 88.34% / 60%);
+        background: hsl(0deg 0% 96.21% / 60%);
         color: rgba(133, 133, 133, 0.5);
         z-index: 1;
     }
