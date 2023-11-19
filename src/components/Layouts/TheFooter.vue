@@ -14,10 +14,12 @@
 </template>
 
 <script>
+// import { useRouter } from 'vue-router';
+
 export default {
     data() {
         return {
-            tableNumber: 1,
+            tableNumber: '',
             counterCart: 0,
         }
     },
@@ -34,6 +36,31 @@ export default {
             this.$router.push({ name: 'cart' });
         },
     },
+    async mounted() {
+        const savedToken = localStorage.getItem('token');
+        const savedTableNumber = localStorage.getItem('tableNumber');
+        const savedExpTime = localStorage.getItem('expTime');
+        console.log('save table number mounted in footer', savedTableNumber)
+
+        if (savedToken === 'undefined') {
+            localStorage.removeItem('token');
+        }
+
+        if (savedTableNumber === 'undefined') {
+            localStorage.removeItem('tableNumber');
+        }
+
+        if (savedExpTime === 'undefined') {
+            localStorage.removeItem('expTime');
+        }
+
+        if (savedTableNumber) {
+            this.tableNumber = savedTableNumber;
+        } else {
+            this.tableNumber = this.$store.getters['qrOrder/tableNumber'];
+        }
+       
+    }
 }
 </script>
 

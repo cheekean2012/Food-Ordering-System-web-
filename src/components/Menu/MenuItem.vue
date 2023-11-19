@@ -83,7 +83,7 @@ import { mapMutations } from 'vuex';
             setItemId() {
                 this.setToggleItemId(this.id);               
             },
-        },
+        },       
     };    
 </script>
 

@@ -5,12 +5,17 @@ const router = createRouter({
     routes: [
         {
             name: "menu", // "home" is the name of the route
-            path: "/menu",            
+            path: "/menu",
+            props: (route) => ({
+              table: route.query.table,
+              token: route.query.token,              
+              expTime: route.query.expTime,
+            }),
             component: () => import("./pages/MenuList.vue"),
         },
         {
             name: "menuItemDetails", // "menuItemDetails" is the name of the route
-            path: "/menu/menuItemDetails",  
+            path: "/menu/menuItemDetails",              
             component: () => import("./pages/MenuItemDetails.vue"),
         },
         {
@@ -18,11 +23,11 @@ const router = createRouter({
             path: "/cart",
             component: () => import("./pages/CartList.vue"),
         },
-        {
-            path: '/:notFound(.*)',
-            //component: () => import("./pages/NotFound.vue"),
-            redirect: '/menu'
-        },
+        // {
+        //     path: '/:notFound(.*)',
+        //     //component: () => import("./pages/NotFound.vue"),
+        //     redirect: '/menu'
+        // },
     ],
 });
 

@@ -8,7 +8,7 @@
                 <p class="card-text">Ingredients: {{ item.ingredient }}</p>
                 <div class="d-flex justify-content-between align-items-center">
                     <p class="card-text mb-0">Price: RM{{ formatPrice }}</p>
-                    <div class="d-flex quantity-container">
+                    <div v-if="isTokenNotEmpty" class="d-flex quantity-container">
                         <button class="btn quantity-btn" @click="removeQuantity">
                             <i class="fa-solid fa-minus fa-2xs p-2" style="color: #f59b00;"></i>
                         </button>
@@ -24,11 +24,11 @@
             <div class="card-body">
                 <h5 class="card-title">Additional</h5>
                 <div class="d-flex justify-content-between align=items-center mt-3">
-                    <div class="checkbox-container">
+                    <div v-if="isTokenNotEmpty" class="checkbox-container">
                         <input type="checkbox" class="custom-checkbox" name="checkbox-takeaway" id="checkbox-takeaway" v-model="isChecked">
                         <label for="checkbox-takeaway">Container Charge Fees</label>
                     </div>
-                    <p class="card-text">RM{{ chargedFee }}</p>
+                    <p v-if="isTokenNotEmpty" class="card-text">RM{{ chargedFee }}</p>
                 </div>
             </div>
         </div>
@@ -41,7 +41,7 @@
         <div class="d-flex pb-5 flex-grow-1">
             <h4 class="card-text m-2">Total Price: RM{{ totalPrice }}</h4>
         </div>
-        <base-button-footer @click="addToCart">{{ cartButtonName }}</base-button-footer>
+        <base-button-footer v-if="isTokenNotEmpty" @click="addToCart">{{ cartButtonName }}</base-button-footer>
     </base-container>
 </template>
 
@@ -87,7 +87,7 @@ import BasePreviousButton from '@/components/UI/BasePreviousButton.vue';
                     
                     this.$store.dispatch('cart/addToCart', {
                         id: this.item.id,
-                        name: this.item.itemName,
+                        itemName: this.item.itemName,
                         unitPrice: this.item.price,
                         totalPrice: this.totalPrice,
                         quantity: this.quantity,
@@ -99,7 +99,7 @@ import BasePreviousButton from '@/components/UI/BasePreviousButton.vue';
                         index: this.getCardItemIndex,
                         item: {
                             id: this.item.id, // Make sure to include the ID
-                            name: this.item.itemName,
+                            itemName: this.item.itemName,
                             unitPrice: this.item.price,
                             totalPrice: this.totalPrice,
                             quantity: this.quantity,
@@ -143,12 +143,15 @@ import BasePreviousButton from '@/components/UI/BasePreviousButton.vue';
                 // Use toFixed on the number
                 return numericPrice.toFixed(2);
             },
+            isTokenNotEmpty() {
+                const token = this.$store.getters['qrOrder/token'];
+                return token;
+            }
         },
         mounted() {
             this.getMenuId = this.toggleMenuItemId;
             this.item = this.menuItems.find(item => item.id === this.getMenuId); 
-            console.log('get id from mounted: ' + this.getMenuId);
-            console.log('get item from mounted: ' + this.item.itemName);
+            
 
             // if (this.getCardItemIndex !== null) {
             //     this.cartButtonName = 'UPDATE CART';
@@ -171,7 +174,7 @@ import BasePreviousButton from '@/components/UI/BasePreviousButton.vue';
                     console.log('get index from detail: ' + vm.cartItems[vm.getCardItemIndex].id);
                     vm.cartButtonName = 'SAVE CHANGES';
 
-                    vm.item.name = vm.cartItems[vm.getCardItemIndex].name;
+                    vm.item.itemName = vm.cartItems[vm.getCardItemIndex].itemName;
                     vm.item.unitPrice = vm.cartItems[vm.getCardItemIndex].unitPrice;
                     vm.quantity = vm.cartItems[vm.getCardItemIndex].quantity;
                     vm.item.remarks = vm.cartItems[vm.getCardItemIndex].remarks;

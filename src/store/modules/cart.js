@@ -24,7 +24,7 @@ export default {
                     // If no existing item with takeaway is found, push a new item
                     state.cartItems.push({
                         id: payload.id,
-                        name: payload.name,
+                        itemName: payload.name,
                         unitPrice: payload.unitPrice,
                         totalPrice: payload.totalPrice,
                         quantity: payload.quantity,
@@ -38,7 +38,7 @@ export default {
                     // If remarks are not empty, push a new item with remarks
                     state.cartItems.push({
                         id: payload.id,
-                        name: payload.name,
+                        itemName: payload.itemName,
                         unitPrice: payload.unitPrice,
                         totalPrice: payload.totalPrice,
                         quantity: payload.quantity,
@@ -53,7 +53,7 @@ export default {
                     // If no remarks and no existing item is found, push a new item
                     state.cartItems.push({
                         id: payload.id,
-                        name: payload.name,
+                        itemName: payload.itemName,
                         unitPrice: payload.unitPrice,
                         totalPrice: payload.totalPrice,
                         quantity: payload.quantity,
