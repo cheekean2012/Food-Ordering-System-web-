@@ -5,7 +5,8 @@ export default {
             cartItems: [],
             cartTotal: 0,
             cartQty: 0,
-            cartItemIndex: null
+            cartItemIndex: null,
+            orderItems: [],
         }
     },
     mutations: {
@@ -16,17 +17,36 @@ export default {
              // Check if takeaway is true
             if (payload.takeaway) {
                 console.log(payload.remarks);
-                // If an existing item with takeaway is found, increase its quantity
-                if (existingCartItem && existingCartItem.takeaway && payload.remarks === existingCartItem.remarks) {
-                    existingCartItem.quantity += payload.quantity;
-                    existingCartItem.totalPrice += payload.totalPrice;
+
+                if (existingCartItem) {
+                    const existingTakeawayRemarks = state.cartItems.find(item => (
+                        item.id === payload.id &&
+                        item.takeaway === payload.takeaway &&
+                        item.remarks === payload.remarks
+                    ));
+
+                    if (existingTakeawayRemarks) {
+                        existingTakeawayRemarks.quantity += parseFloat(payload.quantity);
+                        existingTakeawayRemarks.totalPrice += parseFloat(payload.totalPrice);
+                    } else {
+                        // If no existing item with takeaway is found, push a new item
+                        state.cartItems.push({
+                            id: payload.id,
+                            itemName: payload.itemName,
+                            unitPrice: payload.unitPrice,
+                            totalPrice: parseFloat(payload.totalPrice),
+                            quantity: payload.quantity,
+                            takeaway: payload.takeaway,
+                            remarks: payload.remarks
+                        });
+                    } 
                 } else {
                     // If no existing item with takeaway is found, push a new item
                     state.cartItems.push({
                         id: payload.id,
-                        itemName: payload.name,
+                        itemName: payload.itemName,
                         unitPrice: payload.unitPrice,
-                        totalPrice: payload.totalPrice,
+                        totalPrice: parseFloat(payload.totalPrice),
                         quantity: payload.quantity,
                         takeaway: payload.takeaway,
                         remarks: payload.remarks
@@ -35,27 +55,46 @@ export default {
             } else {
                 // If takeaway is not true
                 if (payload.remarks) {
-                    // If remarks are not empty, push a new item with remarks
-                    state.cartItems.push({
-                        id: payload.id,
-                        itemName: payload.itemName,
-                        unitPrice: payload.unitPrice,
-                        totalPrice: payload.totalPrice,
-                        quantity: payload.quantity,
-                        takeaway: payload.takeaway,
-                        remarks: payload.remarks
-                    });
-                } else if (existingCartItem) {
-                    // If no remarks and an existing item is found, increase its quantity
-                    existingCartItem.quantity += payload.quantity;
-                    existingCartItem.totalPrice += payload.unitPrice;
+                    if (existingCartItem) {
+                        const existingTakeawayRemarks = state.cartItems.find(item => (
+                            item.id === payload.id &&
+                            item.takeaway === payload.takeaway &&
+                            item.remarks === payload.remarks
+                        ));
+                        if (existingTakeawayRemarks) {
+                            existingTakeawayRemarks.quantity += parseFloat(payload.quantity);
+                            existingTakeawayRemarks.totalPrice += parseFloat(payload.totalPrice);
+                        } else {
+                            // If no existing item with takeaway is found, push a new item
+                            state.cartItems.push({
+                                id: payload.id,
+                                itemName: payload.itemName,
+                                unitPrice: payload.unitPrice,
+                                totalPrice: parseFloat(payload.totalPrice),
+                                quantity: payload.quantity,
+                                takeaway: payload.takeaway,
+                                remarks: payload.remarks
+                            });
+                        } 
+                    } else {
+                        // If no remarks and no existing item is found, push a new item
+                        state.cartItems.push({
+                            id: payload.id,
+                            itemName: payload.itemName,
+                            unitPrice: payload.unitPrice,
+                            totalPrice: parseFloat(payload.totalPrice),
+                            quantity: payload.quantity,
+                            takeaway: payload.takeaway,
+                            remarks: payload.remarks
+                        });
+                    }
                 } else {
                     // If no remarks and no existing item is found, push a new item
                     state.cartItems.push({
                         id: payload.id,
                         itemName: payload.itemName,
                         unitPrice: payload.unitPrice,
-                        totalPrice: payload.totalPrice,
+                        totalPrice: parseFloat(payload.totalPrice),
                         quantity: payload.quantity,
                         takeaway: payload.takeaway,
                         remarks: payload.remarks
@@ -65,7 +104,7 @@ export default {
 
             console.log("cartItems", state.cartItems);
             // Update the cart total and quantity
-            state.cartQty += payload.quantity;            
+            state.cartQty += parseFloat(payload.quantity);
             state.cartTotal += parseFloat(payload.totalPrice);
         },
         updateToCartItem(state, payload) {
@@ -73,8 +112,8 @@ export default {
             state.cartItems[index] = payload.item; // Update the item
             
             // Recalculate the cartTotal
-            state.cartTotal = state.cartItems.reduce((total, item) => total + parseFloat(item.totalPrice), 0);
-            state.cartQty = state.cartItems.reduce((total, item) => total + item.quantity, 0);
+            state.cartTotal = state.cartItems.reduce((total, item) => parseFloat(total) + parseFloat(item.totalPrice), 0);
+            state.cartQty = state.cartItems.reduce((total, item) => parseFloat(total) + parseFloat(item.quantity), 0);
            
             console.log(state.cartItems[index].totalPrice);
         },   
@@ -85,12 +124,12 @@ export default {
                 const existingCartItem = state.cartItems[index];
                 console.log(existingCartItem);
                 state.cartItems.splice(index, 1);
-                state.cartQty -= existingCartItem.quantity;
+                state.cartQty -= parseFloat(existingCartItem.quantity);
                 
                 if(existingCartItem.takeaway) {
-                    state.cartTotal = state.cartTotal - (parseFloat(existingCartItem.unitPrice) * existingCartItem.quantity + 2);
+                    state.cartTotal = state.cartTotal - (parseFloat(existingCartItem.unitPrice) * parseFloat(existingCartItem.quantity + 2));
                 } else {
-                    state.cartTotal = state.cartTotal - (parseFloat(existingCartItem.unitPrice) * existingCartItem.quantity);
+                    state.cartTotal = state.cartTotal - (parseFloat(existingCartItem.unitPrice) * parseFloat(existingCartItem.quantity));
                 }
 
                 if (state.cartTotal < 0) {
@@ -100,6 +139,14 @@ export default {
         },
         setToggleCartItemIndex(state, index) {
             state.cartItemIndex = index;
+        },
+        clearItemsFromCart(state) {
+            state.orderItems = state.cartItems;
+            console.log('check order items ', state.orderItems);
+            state.cartItems = [];
+            state.cartTotal = 0;
+            state.cartQty = 0;
+            console.log('check cart items ',state.cartItems);
         }
     },
     actions: {
@@ -112,6 +159,9 @@ export default {
         removeFromCart(context, payload) {
             context.commit('removeItemFromCart', payload);
         },
+        clearCartItems(context) {
+            context.commit('clearItemsFromCart');
+        }
     },
     getters: {
         cartItems(state) {
@@ -122,6 +172,9 @@ export default {
         },
         cartQty(state) {
             return state.cartQty;
+        },
+        orderItems(state) {
+            return state.orderItems;
         }
     }
 }

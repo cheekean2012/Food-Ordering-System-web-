@@ -18,7 +18,7 @@
                         :key="item.index"
                         :index="index"
                         :id="item.id"
-                        :cartItemName="item.name"
+                        :cartItemName="item.itemName"
                         :quantity="item.quantity"
                         :totalPrice="item.totalPrice"
                         :remarks="item.remarks"
@@ -50,13 +50,15 @@
                 <span class="fs-5 fw-bold">RM{{ total }}</span>
             </div>
         </div>
-        <base-button-footer :disabled="cartItems.length === 0">PLACE ORDER</base-button-footer>
+        <base-button-footer :disabled="cartItems.length === 0" @click="addToOrder">PLACE ORDER</base-button-footer>
     </base-container>
 </template>
 
 <script>
 import BasePreviousButton from '@/components/UI/BasePreviousButton.vue';
 import CartItem from '../components/Cart/CartItem.vue';
+import { db } from "../firebase.js";
+import { doc, updateDoc } from "firebase/firestore"; 
 
     export default {
         components: {
@@ -111,6 +113,30 @@ import CartItem from '../components/Cart/CartItem.vue';
                     this.total = (parseFloat(this.subTotal) + parseFloat(this.serviceCharge) + parseFloat(this.roundup)).toFixed(2);
                 }
             },
+            async addToOrder() {
+                const documentID = localStorage.getItem('token');
+                
+                           // Check if documentID exists
+                if (documentID) {
+                    try {
+                        const orderRef = doc(db, "tableOrder", documentID);
+                        
+                        // Update the 'customerOrder' field in the document
+                        await updateDoc(orderRef, {
+                            customerOrder: this.cartItems,  // Use the appropriate field name
+                        });
+
+                        // You may want to clear the cart or perform other actions here
+                        this.$store.dispatch('cart/clearCartItems');
+
+                        // Redirect or perform other actions as needed
+                        this.$router.push('/menu'); // Replace with your desired route
+                    } catch (error) {
+                        console.error("Error updating document: ", error);
+                        // Handle the error as needed
+                    }
+                }
+            }
         },
     }
 </script>

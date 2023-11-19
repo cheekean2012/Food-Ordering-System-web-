@@ -89,7 +89,7 @@ import BasePreviousButton from '@/components/UI/BasePreviousButton.vue';
                         id: this.item.id,
                         itemName: this.item.itemName,
                         unitPrice: this.item.price,
-                        totalPrice: this.totalPrice,
+                        totalPrice: parseFloat(this.totalPrice),
                         quantity: this.quantity,
                         remarks: this.enterRemarks,
                         takeaway: this.isChecked,
@@ -101,7 +101,7 @@ import BasePreviousButton from '@/components/UI/BasePreviousButton.vue';
                             id: this.item.id, // Make sure to include the ID
                             itemName: this.item.itemName,
                             unitPrice: this.item.price,
-                            totalPrice: this.totalPrice,
+                            totalPrice: parseFloat(this.totalPrice),
                             quantity: this.quantity,
                             remarks: this.enterRemarks,
                             takeaway: this.isChecked,

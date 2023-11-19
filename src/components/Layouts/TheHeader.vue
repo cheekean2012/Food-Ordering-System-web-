@@ -10,7 +10,11 @@
                 @input="search"
             />          
             </div>
-            <i class="fa-solid fa-receipt fa-lg me-3 review-order" style="color: black;"></i> 
+            <i class="fa-solid fa-receipt fa-lg me-3 review-order position-relative" style="color: black;">
+                <span v-if="orderItems.length !== 0" class="notify-badge start-100 translate-middle bg-danger border border-light">
+                    <span class="visually-hidden">New alerts</span>
+                </span>
+            </i> 
         </div>
         <div class="menu-item-types-container">
             <div class="menu-item-type" :class="{ active: itemType === activeItem }" 
@@ -28,8 +32,6 @@
 
 <script>
 import { mapState, mapMutations } from 'vuex';
-// import { db } from "../../firebase";
-// import { collection, getDocs } from "firebase/firestore"; 
 
 export default {    
     data() {
@@ -48,14 +50,11 @@ export default {
         menuItems() {
             return this.$store.getters['menu/menuItems'];
         }, 
+        orderItems() {
+            return this.$store.getters['cart/orderItems'];
+        },
     },
     methods: {
-        // search() {
-        //     this.filteredMenuItems = this.menuItems.filter((menuItem) => {
-        //         return menuItem.itemName.toLowerCase().includes(this.searchInput.toLowerCase());
-        //     });
-        //     console.log(this.filteredMenuItems);
-        // },
         ...mapMutations('menuType', ['setActiveItem']),
             menuTypeClick(itemType) {
                 this.activeItem = itemType; // Update activeItem in this component
@@ -72,13 +71,15 @@ export default {
     },
     async mounted() {
         this.activeItem = this.setActiveItemType; // Set activeItem in this component to the value in Vuex store
-        console.log(this.activeItem);
          
         await this.getMenuTypes();
 
         this.menuItemTypes = this.$store.state.menuType.menuTypes;
          // Load all menu items initially
         this.filteredMenuItems = this.$store.getters['menu/menuItems'];
+
+        const getOrderItems = this.orderItems
+        console.log("getOrderItems", getOrderItems);
     },
 };
 </script>
@@ -114,6 +115,13 @@ export default {
     .review-order {
         cursor: pointer;
     }    
+
+        .notify-badge {
+            position: absolute;
+            top: -10px;
+            border-radius: 50%;
+            padding: 0.5rem;
+        }
 
     .menu-item-types-container {
         display: flex;

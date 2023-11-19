@@ -17,7 +17,6 @@ export default {
       },
       setToggleItemId(state, itemId) {
         state.itemId = itemId;
-        console.log('itemId:', itemId);
       },   
       setSearchInput(state, value) {
         state.searchInput = value;
@@ -27,8 +26,7 @@ export default {
       async fetchMenuItems({ commit }) {
         try {
           const querySnapshot = await getDocs(collection(db, 'menuItems'));
-          const menuItems = querySnapshot.docs.map((doc) => doc.data());            
-          console.log('Menu Types:', menuItems);
+          const menuItems = querySnapshot.docs.map((doc) => doc.data());
           commit('setMenuItems', menuItems);
         } catch (error) {
           console.error('Error fetching menu types:', error);

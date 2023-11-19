@@ -19,7 +19,7 @@
                         </button>
                     </div>
                 </router-link>
-                <div class="col-2 d-flex justify-content-center m-auto">{{ totalPrice }}</div>
+                <div class="col-2 d-flex justify-content-center m-auto">{{ totalPrice.toFixed(2) }}</div>
                 <div class="col-1 d-flex justify-content-center m-auto">
                     <button class="trash-btn" @click="removeCartItem">
                         <i class="fa-solid fa-trash"></i>

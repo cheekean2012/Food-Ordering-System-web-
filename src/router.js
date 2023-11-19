@@ -35,11 +35,14 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   // Check if the user is navigating to a route other than the "menu" page
   if (to.name !== 'menu') {
-    // Redirect them back to the "menu" page only if they are not already on it
     if (from.name !== 'menu') {
-      next('/menu');
-    } else {
       // Allow navigation to other pages
+      next();
+    } else if (to.name === 'menuItemDetails' && from.name === 'cart') {
+      console.log("from.name", from.name);
+      console.log("to.name", to.name);
+      next();
+    } else {
       next();
     }
   } else {
@@ -47,5 +50,6 @@ router.beforeEach((to, from, next) => {
     next();
   }
 });
+
 
 export default router;
