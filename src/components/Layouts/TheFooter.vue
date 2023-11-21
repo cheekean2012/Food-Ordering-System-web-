@@ -39,7 +39,6 @@ export default {
     async mounted() {
         const savedToken = localStorage.getItem('token');
         const savedTableNumber = localStorage.getItem('tableNumber');
-        const savedExpTime = localStorage.getItem('expTime');
 
         if (savedToken === 'undefined') {
             localStorage.removeItem('token');
@@ -47,10 +46,6 @@ export default {
 
         if (savedTableNumber === 'undefined') {
             localStorage.removeItem('tableNumber');
-        }
-
-        if (savedExpTime === 'undefined') {
-            localStorage.removeItem('expTime');
         }
 
         if (savedTableNumber) {
