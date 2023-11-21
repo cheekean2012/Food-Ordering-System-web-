@@ -64,11 +64,27 @@ import { doc, getDoc } from "firebase/firestore";
                 const documentSnapshot = await getDoc(orderItemRef);
 
                 if (documentSnapshot.exists()) {
-                    const orderItems = documentSnapshot.data().customerOrdering;
-                    if (orderItems !== null) {
-                        this.$store.dispatch('cart/setOrderItems', orderItems);
+                    const orderItemsOnCustomerOrdering = documentSnapshot.data().customerOrdering;
+                    const orderItemsOnCustomerOrder = documentSnapshot.data().customerOrder;
+
+                    if (orderItemsOnCustomerOrdering !== null) {
+                        this.$store.dispatch('cart/setOrderItems', orderItemsOnCustomerOrdering);
+                        this.orderItems = orderItemsOnCustomerOrdering;
+                    } 
+                    
+                    if (orderItemsOnCustomerOrder !== null) {
+                        if (orderItemsOnCustomerOrdering !== null) {
+                            // Merge arrays using concat method
+                            const mergedOrderItems = orderItemsOnCustomerOrdering.concat(orderItemsOnCustomerOrder);
+                            this.$store.dispatch('cart/setOrderItems', mergedOrderItems);
+                            this.orderItems = mergedOrderItems;
+                        } else {
+                            // If orderItemsOnCustomerOrdering is null, use orderItemsOnCustomerOrder directly
+                            this.$store.dispatch('cart/setOrderItems', orderItemsOnCustomerOrder);
+                            this.orderItems = orderItemsOnCustomerOrder;
+                        }
                     }
-                    this.orderItems = orderItems;
+
                     return; // Exit the function early if orderItems are found
                 }
             }

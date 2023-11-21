@@ -58,7 +58,7 @@
 import BasePreviousButton from '@/components/UI/BasePreviousButton.vue';
 import CartItem from '../components/Items/cart/CartItem.vue';
 import { db } from "../firebase.js";
-import { doc, updateDoc } from "firebase/firestore"; 
+import { doc, updateDoc, getDoc } from "firebase/firestore"; 
 
     export default {
         components: {
@@ -121,12 +121,16 @@ import { doc, updateDoc } from "firebase/firestore";
                     try {
                         const orderRef = doc(db, "tableOrders", documentID);
                         console.log('orderRef: ', orderRef);
+                        const documentSnapshot = await getDoc(orderRef);
+                        let existingOrderingData = documentSnapshot.exists() ? documentSnapshot.data().customerOrdering || [] : [];
+
+                        // Combine existing data with new items
+                        const combinedOrderingData = existingOrderingData.concat(this.cartItems);
                         await this.$store.dispatch('cart/addToOrderItems', this.cartItems)
-                        const orderItems = this.$store.getters['cart/orderItems'];
                         
                         // Update the 'customerOrder' field in the document
                         await updateDoc(orderRef, {
-                            customerOrdering: orderItems,  // Use the appropriate field name
+                            customerOrdering: combinedOrderingData,  // Use the appropriate field name
                         });
 
                         // You may want to clear the cart or perform other actions here

@@ -42,6 +42,8 @@ router.beforeEach((to, from, next) => {
     if (to.name !== 'menu') {
        if (to.name === 'menuItemDetails' && from.name === 'cart') {
           next();
+        } else if (to.name === 'cart' && from.name === 'menuItemDetails') {
+          next();
         } else if (from.name !== 'menu') {
           // Allow navigation to other pages
           next('/menu');

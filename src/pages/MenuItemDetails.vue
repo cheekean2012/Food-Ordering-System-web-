@@ -48,6 +48,7 @@
 <script>
 // import { mapState } from 'vuex';
 import BasePreviousButton from '@/components/UI/BasePreviousButton.vue';
+import { v4 as uuidv4 } from 'uuid';
 
     export default {
         components: {
@@ -84,9 +85,10 @@ import BasePreviousButton from '@/components/UI/BasePreviousButton.vue';
             },
             addToCart() {
                 if (this.cartButtonName === 'ADD TO CART') {
-                    
+                    const uniqueId = uuidv4();
+
                     this.$store.dispatch('cart/addToCart', {
-                        id: this.item.id,
+                        id: uniqueId,
                         itemName: this.item.itemName,
                         unitPrice: this.item.price,
                         totalPrice: parseFloat(this.totalPrice),
@@ -152,7 +154,6 @@ import BasePreviousButton from '@/components/UI/BasePreviousButton.vue';
             this.getMenuId = this.toggleMenuItemId;
             this.item = this.menuItems.find(item => item.id === this.getMenuId); 
             
-
             // if (this.getCardItemIndex !== null) {
             //     this.cartButtonName = 'UPDATE CART';
             //     this.quantity = this.cartItems[this.getCardItemIndex].quantity;
@@ -172,12 +173,13 @@ import BasePreviousButton from '@/components/UI/BasePreviousButton.vue';
                 next(vm => {
                     vm.getCardItemIndex = vm.toggleCartItemIndex;
                     console.log('get index from detail: ' + vm.cartItems[vm.getCardItemIndex].id);
+                    console.log('get index from detail: ' + vm.cartItems[vm.getCardItemIndex].remarks);
                     vm.cartButtonName = 'SAVE CHANGES';
 
                     vm.item.itemName = vm.cartItems[vm.getCardItemIndex].itemName;
                     vm.item.unitPrice = vm.cartItems[vm.getCardItemIndex].unitPrice;
                     vm.quantity = vm.cartItems[vm.getCardItemIndex].quantity;
-                    vm.item.remarks = vm.cartItems[vm.getCardItemIndex].remarks;
+                    vm.enterRemarks = vm.cartItems[vm.getCardItemIndex].remarks;
                     vm.isChecked = vm.cartItems[vm.getCardItemIndex].takeaway;
                 });
             } else {

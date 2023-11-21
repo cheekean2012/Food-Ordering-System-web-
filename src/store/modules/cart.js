@@ -11,96 +11,15 @@ export default {
     },
     mutations: {
         addItemToCart(state, payload) {
-            const existingCartItem = state.cartItems.find(
-                item => item.id === payload.id
-            );
-             // Check if takeaway is true
-            if (payload.takeaway) {
-                console.log(payload.remarks);
-
-                if (existingCartItem) {
-                    const existingTakeawayRemarks = state.cartItems.find(item => (
-                        item.id === payload.id &&
-                        item.takeaway === payload.takeaway &&
-                        item.remarks === payload.remarks
-                    ));
-
-                    if (existingTakeawayRemarks) {
-                        existingTakeawayRemarks.quantity += parseFloat(payload.quantity);
-                        existingTakeawayRemarks.totalPrice += parseFloat(payload.totalPrice);
-                    } else {
-                        // If no existing item with takeaway is found, push a new item
-                        state.cartItems.push({
-                            id: payload.id,
-                            itemName: payload.itemName,
-                            unitPrice: payload.unitPrice,
-                            totalPrice: parseFloat(payload.totalPrice),
-                            quantity: payload.quantity,
-                            takeaway: payload.takeaway,
-                            remarks: payload.remarks
-                        });
-                    } 
-                } else {
-                    // If no existing item with takeaway is found, push a new item
-                    state.cartItems.push({
-                        id: payload.id,
-                        itemName: payload.itemName,
-                        unitPrice: payload.unitPrice,
-                        totalPrice: parseFloat(payload.totalPrice),
-                        quantity: payload.quantity,
-                        takeaway: payload.takeaway,
-                        remarks: payload.remarks
-                    });
-                }                
-            } else {
-                // If takeaway is not true
-                if (payload.remarks) {
-                    if (existingCartItem) {
-                        const existingTakeawayRemarks = state.cartItems.find(item => (
-                            item.id === payload.id &&
-                            item.takeaway === payload.takeaway &&
-                            item.remarks === payload.remarks
-                        ));
-                        if (existingTakeawayRemarks) {
-                            existingTakeawayRemarks.quantity += parseFloat(payload.quantity);
-                            existingTakeawayRemarks.totalPrice += parseFloat(payload.totalPrice);
-                        } else {
-                            // If no existing item with takeaway is found, push a new item
-                            state.cartItems.push({
-                                id: payload.id,
-                                itemName: payload.itemName,
-                                unitPrice: payload.unitPrice,
-                                totalPrice: parseFloat(payload.totalPrice),
-                                quantity: payload.quantity,
-                                takeaway: payload.takeaway,
-                                remarks: payload.remarks
-                            });
-                        } 
-                    } else {
-                        // If no remarks and no existing item is found, push a new item
-                        state.cartItems.push({
-                            id: payload.id,
-                            itemName: payload.itemName,
-                            unitPrice: payload.unitPrice,
-                            totalPrice: parseFloat(payload.totalPrice),
-                            quantity: payload.quantity,
-                            takeaway: payload.takeaway,
-                            remarks: payload.remarks
-                        });
-                    }
-                } else {
-                    // If no remarks and no existing item is found, push a new item
-                    state.cartItems.push({
-                        id: payload.id,
-                        itemName: payload.itemName,
-                        unitPrice: payload.unitPrice,
-                        totalPrice: parseFloat(payload.totalPrice),
-                        quantity: payload.quantity,
-                        takeaway: payload.takeaway,
-                        remarks: payload.remarks
-                    });
-                }
-            }
+            state.cartItems.push({
+                id: payload.id,
+                itemName: payload.itemName,
+                unitPrice: payload.unitPrice,
+                totalPrice: parseFloat(payload.totalPrice),
+                quantity: payload.quantity,
+                takeaway: payload.takeaway,
+                remarks: payload.remarks
+            });
 
             console.log("cartItems", state.cartItems);
             // Update the cart total and quantity
@@ -127,7 +46,7 @@ export default {
                 state.cartQty -= parseFloat(existingCartItem.quantity);
                 
                 if(existingCartItem.takeaway) {
-                    state.cartTotal = state.cartTotal - (parseFloat(existingCartItem.unitPrice) * parseFloat(existingCartItem.quantity + 2));
+                    state.cartTotal = state.cartTotal - parseFloat(existingCartItem.totalPrice);
                 } else {
                     state.cartTotal = state.cartTotal - (parseFloat(existingCartItem.unitPrice) * parseFloat(existingCartItem.quantity));
                 }
