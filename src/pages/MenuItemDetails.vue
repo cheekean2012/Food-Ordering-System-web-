@@ -172,12 +172,10 @@ import { v4 as uuidv4 } from 'uuid';
             if (previousPage === 'cart') {
                 next(vm => {
                     vm.getCardItemIndex = vm.toggleCartItemIndex;
-                    console.log('get index from detail: ' + vm.cartItems[vm.getCardItemIndex].id);
-                    console.log('get index from detail: ' + vm.cartItems[vm.getCardItemIndex].remarks);
                     vm.cartButtonName = 'SAVE CHANGES';
 
                     vm.item.itemName = vm.cartItems[vm.getCardItemIndex].itemName;
-                    vm.item.unitPrice = vm.cartItems[vm.getCardItemIndex].unitPrice;
+                    vm.item.price = vm.cartItems[vm.getCardItemIndex].unitPrice;
                     vm.quantity = vm.cartItems[vm.getCardItemIndex].quantity;
                     vm.enterRemarks = vm.cartItems[vm.getCardItemIndex].remarks;
                     vm.isChecked = vm.cartItems[vm.getCardItemIndex].takeaway;
