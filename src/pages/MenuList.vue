@@ -1,16 +1,7 @@
-<template>        
-    <base-container>       
+<template>    
+    <base-container>
+         <show-modal v-if="showStatusModal" :show-modal="showStatusModal" />
         <the-header></the-header>
-
-        <div v-if="showStatusModal == true" class="modal visible">
-            <div class="modal__content">
-                <h1>Error</h1>
-
-                <p>
-                    The QR code was not able to proceed. Please reqeust a new QR code from the staff.
-                </p>
-            </div>
-        </div>
         <section>
             <div>
                 <ul class="pb-5">
@@ -19,7 +10,6 @@
                 </ul>
             </div>
         </section>
-        
         <the-footer v-if="isTokenNotEmpty"></the-footer>
     </base-container>    
 </template>
@@ -27,12 +17,14 @@
 <script>
 import MenuType from '../components/Menu/MenuType.vue';
 // import { useRouter } from 'vue-router';
+import ShowModal from '../components/UI/BasePopUpDisabledModal.vue';
 import { db } from "../firebase.js";
-import { doc, getDoc } from "firebase/firestore"; 
+import { getDocs, where, query, collection } from "firebase/firestore"; 
 
 export default {   
     components: {
         MenuType,
+        ShowModal,
     },
     data() {
         return {
@@ -66,15 +58,11 @@ export default {
         }
     },
     async mounted() {
-        const savedId = localStorage.getItem('qrId');
         const savedToken = localStorage.getItem('token');
         const savedTableNumber = localStorage.getItem('tableNumber');
 
         localStorage.removeItem('ExpTime');
-        
-        if (savedId == 'undefined' && savedId == null) {
-            localStorage.removeItem('qrId');
-        }
+        localStorage.removeItem('qrId');        
 
         // Check if the key exists and its value is not 'undefined'
         if (savedToken == 'undefined' && savedToken == null) {
@@ -92,14 +80,17 @@ export default {
             if (tokenFromUrl != null) {
                 console.log('tokenFromUrl is not null');
                 // Assuming your collection is named 'tableOrder'
-                const tableOrderRef = doc(db, 'tableOrders', tokenFromUrl);
+                const tableOrderRef = collection(db, 'tableOrders');
 
-                // Retrieve the document data
-                const documentSnapshot = await getDoc(tableOrderRef);
+                const querySnapshot = await getDocs(query(tableOrderRef, where('token', '==', tokenFromUrl)));
+                console.log('querySnapshot', querySnapshot)
+                console.log(tokenFromUrl)
 
-                if (documentSnapshot.exists()) {
-                    // Document exists, you can access its data
-                    const id = documentSnapshot.data().id;
+                    // Check if any documents match the query
+                if (!querySnapshot.empty) {
+                    // Loop through the documents to access their data and IDs
+                    const documentSnapshot = querySnapshot.docs[0];           
+
                     const tableNumber = documentSnapshot.data().tableNumber;
                     const token = documentSnapshot.data().token;
                     const status = documentSnapshot.data().status;
@@ -109,8 +100,6 @@ export default {
                         // Set showStatusModal to true to display the modal
                         this.showStatusModal = true;
                     } else {
-                        // Continue with the rest of your logic
-                        this.$store.dispatch('qrOrder/setQrId', id);
                         this.$store.dispatch('qrOrder/setTableNumber', tableNumber);
                         this.$store.dispatch('qrOrder/setToken', token);
 
@@ -125,39 +114,39 @@ export default {
             } else {
                 console.log('tokenFromUrl is null');
             }
-        } else if (savedId != null && savedToken != null && savedTableNumber != null) {
+        } else if (savedToken != null && savedTableNumber != null) {
             // const customUrl = `/menu?tableNumber=${savedTableNumber}&token=${savedToken}`;
 
-            const tableOrderRef = doc(db, 'tableOrders', savedId);
+            // Assuming your collection is named 'tableOrder'
+            const tableOrderRef = collection(db, 'tableOrders');
 
-                // Retrieve the document data
-                const documentSnapshot = await getDoc(tableOrderRef);
+            const querySnapshot = await getDocs(query(tableOrderRef, where('token', '==', savedToken)));
 
-                if (documentSnapshot.exists()) {
-                    // Document exists, you can access its data
-                    const id = documentSnapshot.data().id;
-                    const tableNumber = documentSnapshot.data().tableNumber;
-                    const token = documentSnapshot.data().token;
-                    const status = documentSnapshot.data().status;
-                    console.log('status', status)
+            if (!querySnapshot.empty) {
+                // Loop through the documents to access their data and IDs
+                const documentSnapshot = querySnapshot.docs[0];           
 
-                    if (status === 'COMPLETED') {
-                        // Set showStatusModal to true to display the modal
-                        this.showStatusModal = true;
-                    } else {
-                        // Continue with the rest of your logic
-                        this.$store.dispatch('qrOrder/setQrId', id);
-                        this.$store.dispatch('qrOrder/setTableNumber', tableNumber);
-                        this.$store.dispatch('qrOrder/setToken', token);
+                const tableNumber = documentSnapshot.data().tableNumber;
+                const token = documentSnapshot.data().token;
+                const status = documentSnapshot.data().status;
+                console.log('status', status)
 
-                        const customUrl = `/menu?tableNumber=${tableNumber}&token=${token}`;
-
-                        // Use router.push to navigate to the custom URL
-                        this.$router.push(customUrl);
-                    }
+                if (status === 'COMPLETED') {
+                    // Set showStatusModal to true to display the modal
+                    this.showStatusModal = true;
                 } else {
-                    console.log('Document does not exist');
+                    // Continue with the rest of your logic
+                    this.$store.dispatch('qrOrder/setTableNumber', tableNumber);
+                    this.$store.dispatch('qrOrder/setToken', token);
+
+                    const customUrl = `/menu?tableNumber=${tableNumber}&token=${token}`;
+
+                    // Use router.push to navigate to the custom URL
+                    this.$router.push(customUrl);
                 }
+            } else {
+                console.log('Document does not exist');
+            }
         } else {
             console.log('savedToken is null');
         }
@@ -174,34 +163,5 @@ export default {
         list-style: none;
         padding: 0;
         text-decoration: none;
-    }
-
-    .modal {
-        visibility: hidden;
-        opacity: 0;
-        position: fixed;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: rgba(77, 77, 77, .7);
-        transition: all .4s;
-    }
-
-    .visible {
-        visibility: visible;
-        opacity: 1;
-    }
-
-    .modal__content {
-        border-radius: 4px;
-        position: relative;
-        width: 500px;
-        max-width: 90%;
-        background: #fff;
-        padding: 1em 2em;
     }
 </style>

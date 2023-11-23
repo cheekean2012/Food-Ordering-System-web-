@@ -27,6 +27,11 @@ const router = createRouter({
           name: "order",
           path: "/menu/orderList",
           component: () => import("./pages/OrderList.vue"),
+        },
+        {
+          name: "dashboard",
+          path: "/dashboard",
+          component: () => import("./pages/DashboardPage.vue"),
         }
         // {
         //     path: '/:notFound(.*)',
@@ -43,6 +48,8 @@ router.beforeEach((to, from, next) => {
        if (to.name === 'menuItemDetails' && from.name === 'cart') {
           next();
         } else if (to.name === 'cart' && from.name === 'menuItemDetails') {
+          next();
+        } else if (to.name === 'dashboard') {
           next();
         } else if (from.name !== 'menu') {
           // Allow navigation to other pages
