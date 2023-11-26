@@ -58,11 +58,15 @@ export default {
         }
     },
     async mounted() {
+        const savedId = localStorage.getItem('qrId');
         const savedToken = localStorage.getItem('token');
         const savedTableNumber = localStorage.getItem('tableNumber');
 
         localStorage.removeItem('ExpTime');
-        localStorage.removeItem('qrId');        
+        
+        if (savedId == 'undefined' && savedId == null) {
+            localStorage.removeItem('qrId');
+        }
 
         // Check if the key exists and its value is not 'undefined'
         if (savedToken == 'undefined' && savedToken == null) {
@@ -83,14 +87,13 @@ export default {
                 const tableOrderRef = collection(db, 'tableOrders');
 
                 const querySnapshot = await getDocs(query(tableOrderRef, where('token', '==', tokenFromUrl)));
-                console.log('querySnapshot', querySnapshot)
-                console.log(tokenFromUrl)
 
                     // Check if any documents match the query
                 if (!querySnapshot.empty) {
                     // Loop through the documents to access their data and IDs
                     const documentSnapshot = querySnapshot.docs[0];           
 
+                    const id = documentSnapshot.data().id;
                     const tableNumber = documentSnapshot.data().tableNumber;
                     const token = documentSnapshot.data().token;
                     const status = documentSnapshot.data().status;
@@ -100,6 +103,8 @@ export default {
                         // Set showStatusModal to true to display the modal
                         this.showStatusModal = true;
                     } else {
+                        // Continue with the rest of your logic
+                        this.$store.dispatch('qrOrder/setQrId', id);
                         this.$store.dispatch('qrOrder/setTableNumber', tableNumber);
                         this.$store.dispatch('qrOrder/setToken', token);
 
@@ -114,7 +119,7 @@ export default {
             } else {
                 console.log('tokenFromUrl is null');
             }
-        } else if (savedToken != null && savedTableNumber != null) {
+        } else if (savedId != null && savedToken != null && savedTableNumber != null) {
             // const customUrl = `/menu?tableNumber=${savedTableNumber}&token=${savedToken}`;
 
             // Assuming your collection is named 'tableOrder'
@@ -126,6 +131,7 @@ export default {
                 // Loop through the documents to access their data and IDs
                 const documentSnapshot = querySnapshot.docs[0];           
 
+                const id = documentSnapshot.data().id;
                 const tableNumber = documentSnapshot.data().tableNumber;
                 const token = documentSnapshot.data().token;
                 const status = documentSnapshot.data().status;
@@ -136,6 +142,7 @@ export default {
                     this.showStatusModal = true;
                 } else {
                     // Continue with the rest of your logic
+                    this.$store.dispatch('qrOrder/setQrId', id);
                     this.$store.dispatch('qrOrder/setTableNumber', tableNumber);
                     this.$store.dispatch('qrOrder/setToken', token);
 
