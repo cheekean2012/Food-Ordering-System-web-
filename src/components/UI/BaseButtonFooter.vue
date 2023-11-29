@@ -1,5 +1,5 @@
 <template>
-    <div class="d-flex footer sticky-bottom">
+    <div class="d-flex footer">
             <button class="btn footer-btn" :disabled="disabled">
                 <slot></slot>
             </button>

@@ -4,7 +4,7 @@
             <base-previous-button class="previous-btn" @click="backToPrevious" />
             <h5 class="card-title">ORDER LIST</h5>
         </div>
-        <section v-if="orderItems === null">
+        <section v-if="orderItems === null && orderItems.length === 0">
             <div class="empty-container">
                 <i class="fa-solid fa-circle-exclamation pb-4" style="font-size: 5rem;"></i>
                 <h5 class="text-center pt-4">The order was empty. Please add the items into cart and place order.</h5>
@@ -44,7 +44,7 @@ import { doc, getDoc } from "firebase/firestore";
         },
         data() {
             return {
-                orderItems: null,
+                orderItems: [],
             }
         },
         computed: {

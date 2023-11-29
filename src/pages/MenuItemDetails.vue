@@ -251,11 +251,10 @@ import { v4 as uuidv4 } from 'uuid';
         font-weight: 500;
     }
     
-    .footer {
-        height: 50px;        
-        margin: 0 auto;
-        box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;                
-    }
+    /* .footer {
+        margin-bottom: 0;
+        bottom: 0;
+    } */
 
     .cart-btn {
         width: 100%;

@@ -12,7 +12,7 @@
             </div>
             <router-link to="/menu/orderList">
                 <i class="fa-solid fa-receipt fa-lg me-3 review-order position-relative" style="color: black;">
-                    <span v-if="orderItems != null" class="notify-badge start-100 translate-middle bg-danger border border-light">
+                    <span v-if="orderItems != null && orderItems.length > 0" class="notify-badge start-100 translate-middle bg-danger border border-light">
                         <span class="visually-hidden">New alerts</span>
                     </span>
                 </i> 
@@ -41,7 +41,7 @@ export default {
             menuItemTypes: [],
             activeItem: '',
             filteredMenuItems: [],
-            orderItems: null,
+            orderItems: [],
         };
     },
     computed: {
